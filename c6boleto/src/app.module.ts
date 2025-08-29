@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { HttpModule } from '@nestjs/axios';
 import * as fs from 'fs';
 import * as https from 'https';
+import { AuthService } from './auth.service';
 
 @Module({
   imports: [
@@ -18,6 +19,6 @@ import * as https from 'https';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthService],
 })
 export class AppModule {}

@@ -3,6 +3,7 @@ import { Controller, Get } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import * as dotenv from 'dotenv';
+import { AuthService } from './auth.service';
 
 dotenv.config();
 function encodeToBase64(clientId: string, clientSecret: string): string {
@@ -13,7 +14,7 @@ function encodeToBase64(clientId: string, clientSecret: string): string {
 
 @Controller()
 export class AppController {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Get('users')
   getUsers() {
@@ -24,24 +25,8 @@ export class AppController {
   }
 
   @Get('auth')
-  async getAuth() {
-    const url = 'https://baas-api-sandbox.c6bank.info/v1/auth/';
-    const clientSecret = process.env.CLIENT_SECRET || '';
-    const clientId = process.env.CLIENT_ID || '';
-    const base64Encoded = encodeToBase64(clientId, clientSecret);
-
-    const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: 'Basic ' + base64Encoded,
-    };
-
-    const body = new URLSearchParams();
-    body.append('grant_type', 'client_credentials');
-
-    const response = await firstValueFrom(
-      this.httpService.post(url, body.toString(), { headers }),
-    );
-
-    return response.data;
+  async auth() {
+    const token = await this.authService.getToken();
+    return { token };
   }
 }
