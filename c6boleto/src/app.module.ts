@@ -5,6 +5,8 @@ import { HttpModule } from '@nestjs/axios';
 import * as fs from 'fs';
 import * as https from 'https';
 import { AuthService } from './auth.service';
+import { BankSlipService } from './bank-slip.service';
+import { BankSlipController } from './bank-slip.controller';
 
 @Module({
   imports: [
@@ -18,7 +20,7 @@ import { AuthService } from './auth.service';
       }),
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService, AuthService],
+  controllers: [AppController, BankSlipController],
+  providers: [AppService, AuthService, BankSlipService],
 })
 export class AppModule {}
