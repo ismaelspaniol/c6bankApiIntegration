@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { AuthService } from './auth.service';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
@@ -21,10 +21,25 @@ export class BankSlipService {
       'Partner-Software-Version': '1.0.0',
     };
 
-    const response = await firstValueFrom(
-      this.httpService.post(url, data, { headers }),
-    );
-
-    return response.data;
+    try {
+      const response = await firstValueFrom(
+        this.httpService.post(url, data, { headers }),
+      );
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return response.data;
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (error.response && error.response.status === 400) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+            data: error.response.data,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      throw error; // Re-throw other errors
+    }
   }
 }

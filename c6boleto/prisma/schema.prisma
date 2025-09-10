@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model BankSlip {
+  id                     Int      @id @default(autoincrement())
+  externalReferenceId    String
+  amount                 Float
+  dueDate                DateTime
+  instructions           String[]
+  discount               Json
+  interest               Json
+  fine                   Json
+  billingScheme          String
+  ourNumber              String
+  payerName              String
+  payerTaxId             String
+  payerEmail             String
+  payerAddress           Json
+  createdAt              DateTime @default(now())
+  c6banckReturned        Json?
+}
