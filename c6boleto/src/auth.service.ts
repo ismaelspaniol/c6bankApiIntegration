@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import * as dotenv from 'dotenv';
+import { getApiUrl } from './functions';
+import { CreateBankSlipDto } from './interfaces';
 
 function encodeToBase64(clientId: string, clientSecret: string): string {
   const combined = `${clientId}:${clientSecret}`;
@@ -14,6 +17,8 @@ interface AuthResponse {
   expires_in: number;
 }
 
+dotenv.config();
+
 @Injectable()
 export class AuthService {
   private token: string | null = null;
@@ -21,7 +26,7 @@ export class AuthService {
 
   constructor(private readonly httpService: HttpService) {}
 
-  async getToken(): Promise<string> {
+  async getToken(data: CreateBankSlipDto): Promise<string> {
     const now = Date.now();
 
     // se ainda tem token válido, retorna
@@ -34,7 +39,7 @@ export class AuthService {
     const base64Encoded = encodeToBase64(clientId, clientSecret);
 
     // buscar novo token
-    const url = 'https://baas-api-sandbox.c6bank.info/v1/auth/';
+    const url = getApiUrl(data.data.production_environment) + 'v1/auth/';
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: 'Basic ' + base64Encoded,

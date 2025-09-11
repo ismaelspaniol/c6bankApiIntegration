@@ -25,5 +25,9 @@ model BankSlip {
   payerEmail             String
   payerAddress           Json
   createdAt              DateTime @default(now())
-  c6banckReturned        Json?
+  banckReturned          Json?
+  banckReturnedError     Json?
+  production_environment Boolean  @default(false)
+  uuid                   String   @unique
+
 }

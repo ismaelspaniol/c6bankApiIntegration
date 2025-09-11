@@ -2,18 +2,28 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { AuthService } from './auth.service';
 import { firstValueFrom } from 'rxjs';
+import * as dotenv from 'dotenv';
+import { BankSlipDbService } from './bank-slipdb.service';
+import {
+  BanckReturnedError,
+  BankReturnedResponse,
+  CreateBankSlipDto,
+} from './interfaces';
+import { getApiUrl } from './functions';
 
+dotenv.config();
 @Injectable()
 export class BankSlipService {
   constructor(
     private readonly httpService: HttpService,
     private readonly authService: AuthService,
+    private readonly bankSlipDbService: BankSlipDbService,
   ) {}
 
-  async createBankSlip(data: any) {
-    const token = await this.authService.getToken();
+  async createBankSlip(data: CreateBankSlipDto) {
+    const token = await this.authService.getToken(data);
 
-    const url = 'https://baas-api-sandbox.c6bank.info/v1/bank_slips/';
+    const url = getApiUrl(data.data.production_environment) + 'v1/bank_slips/';
     const headers = {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -23,13 +33,22 @@ export class BankSlipService {
 
     try {
       const response = await firstValueFrom(
-        this.httpService.post(url, data, { headers }),
+        this.httpService.post(url, data.bank_slip, { headers }),
       );
+
+      data.data.banckReturned = response.data as BankReturnedResponse;
+      await this.bankSlipDbService.upInsertBankSlip(data);
+
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return response.data;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.response && error.response.status === 400) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        data.data.banckReturnedError = error.response
+          .data as BanckReturnedError;
+        await this.bankSlipDbService.upInsertBankSlip(data);
+
         throw new HttpException(
           {
             status: HttpStatus.BAD_REQUEST,

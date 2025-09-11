@@ -7,6 +7,7 @@ import * as https from 'https';
 import { AuthService } from './auth.service';
 import { BankSlipService } from './bank-slip.service';
 import { BankSlipController } from './bank-slip.controller';
+import { BankSlipDbService } from './bank-slipdb.service';
 
 @Module({
   imports: [
@@ -21,6 +22,6 @@ import { BankSlipController } from './bank-slip.controller';
     }),
   ],
   controllers: [AppController, BankSlipController],
-  providers: [AppService, AuthService, BankSlipService],
+  providers: [AppService, AuthService, BankSlipService, BankSlipDbService],
 })
 export class AppModule {}
