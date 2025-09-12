@@ -59,3 +59,52 @@ export interface BanckReturnedError {
     timestamp: string;
   };
 }
+
+interface Discount {
+  discount_type: 'V';
+  first: {
+    value: number;
+    dead_line: number;
+  };
+  second: {
+    value: number;
+    dead_line: number;
+  };
+  third: {
+    value: number;
+    dead_line: number;
+  };
+}
+
+interface Interest {
+  type: 'V';
+  value: number;
+  dead_line: number;
+}
+
+interface Fine {
+  type: 'V';
+  value: number;
+  dead_line: number;
+}
+
+export interface UpdateBankSlipDto {
+  updateSlip: {
+    amount: number;
+    due_date: string;
+    discount: Discount;
+    interest: Interest;
+    fine: Fine;
+  };
+  data: {
+    id: string;
+    production_environment: boolean;
+  };
+}
+
+export interface consultBankSlipDto {
+  data: {
+    id: string;
+    production_environment: boolean;
+  };
+}

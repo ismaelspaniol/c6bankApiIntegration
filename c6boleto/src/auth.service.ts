@@ -26,7 +26,7 @@ export class AuthService {
 
   constructor(private readonly httpService: HttpService) {}
 
-  async getToken(data: CreateBankSlipDto): Promise<string> {
+  async getToken(production_environment: boolean): Promise<string> {
     const now = Date.now();
 
     // se ainda tem token válido, retorna
@@ -39,7 +39,7 @@ export class AuthService {
     const base64Encoded = encodeToBase64(clientId, clientSecret);
 
     // buscar novo token
-    const url = getApiUrl(data.data.production_environment) + 'v1/auth/';
+    const url = getApiUrl(production_environment) + 'v1/auth/';
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: 'Basic ' + base64Encoded,
