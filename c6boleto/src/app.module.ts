@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 import { BankSlipService } from './bank-slip.service';
 import { BankSlipController } from './bank-slip.controller';
 import { BankSlipDbService } from './bank-slipdb.service';
+import { ClasstribModule } from './classtrib/classtrib.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { BankSlipDbService } from './bank-slipdb.service';
         rejectUnauthorized: true, // valida o certificado do servidor
       }),
     }),
+    ClasstribModule,
   ],
   controllers: [AppController, BankSlipController],
   providers: [AppService, AuthService, BankSlipService, BankSlipDbService],
