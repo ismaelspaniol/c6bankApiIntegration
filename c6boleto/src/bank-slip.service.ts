@@ -43,8 +43,11 @@ export class BankSlipService {
       data.data.banckReturned = response.data as BankReturnedResponse;
       await this.bankSlipDbService.upInsertBankSlip(data);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return response.data;
+      return {
+        status: HttpStatus.OK,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        data: response.data,
+      };
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.response && error.response.status === 400) {
@@ -56,10 +59,11 @@ export class BankSlipService {
         throw new HttpException(
           {
             status: HttpStatus.BAD_REQUEST,
+
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             data: error.response.data,
           },
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.OK,
         );
       }
       throw error; // Re-throw other errors
@@ -110,15 +114,30 @@ export class BankSlipService {
     }
   }
 
-  async consultBankSlip(body: consultBankSlipDto) {
-    const token = await this.authService.getToken(
-      body.data.production_environment,
-    );
+  async consultBankSlip(uuid: string, production_environment: boolean) {
+    const token = await this.authService.getToken(production_environment);
 
-    const url =
-      getApiUrl(body.data.production_environment) +
-      'v1/bank_slips/' +
-      body.data.id;
+    console.log(uuid);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const id = await this.bankSlipDbService.getidBankSlip(uuid);
+    console.log(id);
+    if (!id) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          data: {
+            type: 'Not Found',
+            title: 'Bank slip not found',
+            status: HttpStatus.NOT_FOUND,
+            detail: 'No bank slip found for the provided UUID',
+            correlation_id: '',
+            timestamp: new Date().toISOString(),
+          },
+        },
+        HttpStatus.OK,
+      );
+    }
+    const url = getApiUrl(production_environment) + 'v1/bank_slips/' + id;
     const headers = {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -133,8 +152,13 @@ export class BankSlipService {
 
       console.log(response.data);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return response.data;
+      return {
+        status: HttpStatus.OK,
+        data: {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          base64_pdf_file: response.data.base64_pdf_file,
+        },
+      };
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.response && error.response.status === 400) {
@@ -162,7 +186,7 @@ export class BankSlipService {
     const url =
       getApiUrl(body.data.production_environment) +
       'v1/bank_slips/' +
-      body.data.id +
+      body.data.uuid +
       'cancel';
     const headers = {
       Authorization: `Bearer ${token}`,

@@ -16,14 +16,14 @@ export interface CreateBankSlipDto {
     amount: number;
     due_date: string;
     instructions: string[];
-    discount: {
+    discount?: {
       discount_type: string;
       first: { value: number; dead_line: number };
       second: { value: number; dead_line: number };
       third: { value: number; dead_line: number };
     };
-    interest: { type: string; value: number; dead_line: number };
-    fine: { type: string; value: number; dead_line: number };
+    interest?: { type: string; value: number; dead_line: number };
+    fine?: { type: string; value: number; dead_line: number };
     billing_scheme: string;
     our_number: string;
     payer: {
@@ -104,7 +104,7 @@ export interface UpdateBankSlipDto {
 
 export interface consultBankSlipDto {
   data: {
-    id: string;
+    uuid: string;
     production_environment: boolean;
   };
 }

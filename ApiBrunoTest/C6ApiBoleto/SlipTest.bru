@@ -1,7 +1,7 @@
 meta {
-  name: Slip
+  name: SlipTest
   type: http
-  seq: 1
+  seq: 4
 }
 
 post {
@@ -13,7 +13,7 @@ post {
 body:json {
   {
     "bank_slip": {
-      "external_reference_id": "10",
+      "external_reference_id": "11",
       "amount": 123.45,
       "due_date": "2025-10-11",
       "instructions": [
@@ -21,32 +21,7 @@ body:json {
         "str2",
         "str3",
         "str4"
-      ],
-      "discount": {
-        "discount_type": "V",
-        "first": {
-          "value": 10,
-          "dead_line": 10
-        },
-        "second": {
-          "value": 5,
-          "dead_line": 8
-        },
-        "third": {
-          "value": 3,
-          "dead_line": 7
-        }
-      },
-      "interest": {
-        "type": "V",
-        "value": 10,
-        "dead_line": 10
-      },
-      "fine": {
-        "type": "V",
-        "value": 10,
-        "dead_line": 10
-      },
+      ],        
       "our_number": "3048",
       "payer": {
         "name": "Ismael Rodrigo Spaniol",
@@ -63,7 +38,7 @@ body:json {
       }
     },
     "data": {
-      "uuid": "10",
+      "uuid": "11",
       "production_environment":false
     }
   }

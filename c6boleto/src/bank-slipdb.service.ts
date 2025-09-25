@@ -9,6 +9,17 @@ const prisma = new PrismaClient();
 export class BankSlipDbService {
   constructor() {}
 
+  async getidBankSlip(uuid: string) {
+    const bankSlip = await prisma.bankSlip.findUnique({
+      where: {
+        uuid: uuid,
+      },
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const bankReturned = bankSlip?.banckReturned as any;
+    return bankReturned?.id ?? '';
+  }
+
   async upInsertBankSlip(body: CreateBankSlipDto) {
     console.log(body);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,9 +53,10 @@ export class BankSlipDbService {
         amount: body.bank_slip.amount,
         dueDate: new Date(body.bank_slip.due_date),
         instructions: body.bank_slip.instructions,
-        discount: body.bank_slip.discount,
-        interest: body.bank_slip.interest,
-        fine: body.bank_slip.fine,
+        ...(body.bank_slip.discount && { discount: body.bank_slip.discount }),
+        ...(body.bank_slip.interest && { interest: body.bank_slip.interest }),
+        ...(body.bank_slip.fine && { fine: body.bank_slip.fine }),
+
         billingScheme: body.bank_slip.billing_scheme,
         ourNumber: body.bank_slip.our_number,
         payerName: body.bank_slip.payer.name,

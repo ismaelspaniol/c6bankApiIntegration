@@ -15,9 +15,9 @@ model BankSlip {
   amount                 Float
   dueDate                DateTime
   instructions           String[]
-  discount               Json
-  interest               Json
-  fine                   Json
+  discount               Json?
+  interest               Json?
+  fine                   Json?
   billingScheme          String
   ourNumber              String
   payerName              String
@@ -29,5 +29,169 @@ model BankSlip {
   banckReturnedError     Json?
   production_environment Boolean  @default(false)
   uuid                   String   @unique
+  base64pdf              String?
 
+}
+
+
+
+// apenas pata teste das classes do GAS
+
+model enterprise {
+  id          Int      @id @default(autoincrement())
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt  
+products  product[]
+ users     user[] 
+ orders    order[]
+ customers customer[]
+ stock_movements stock_movement[]
+ cash_flows cash_flow[]
+ cash_flow_groups cash_flow_group[]
+}
+
+model user {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String   @unique
+  password      String
+  enterprise_id  Int
+  super_admin  Boolean  @default(false)
+  enterprise    enterprise @relation(fields: [enterprise_id], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt  
+}
+
+model product {
+  id          Int      @id @default(autoincrement())
+  name        String  
+  enterprise_id  Int
+  enterprise    enterprise @relation(fields: [enterprise_id], references: [id])
+  stock_movements stock_movement[]
+  order_products order_product[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt  
+}
+
+model customer {
+  id          Int      @id @default(autoincrement())
+  name        String
+  observation       String
+  city_ibge_code    String
+  city        city @relation(fields: [city_ibge_code], references: [ibge_code])
+  postal_code String
+  number     String
+  bullshit   String  
+  enterprise_id  Int
+  enterprise    enterprise @relation(fields: [enterprise_id], references: [id])
+
+  customer_phones customer_phone[]
+  orders    order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt   
+}
+
+model city {
+  ibge_code       String      @id
+  name            String
+  uf              String
+  state           String
+  ibge_state_code String
+  customers       customer[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model customer_phone {
+  id          Int      @id @default(autoincrement())
+  customer_id Int
+  customer    customer @relation(fields: [customer_id], references: [id])
+  phone       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt  
+}
+
+enum stock_moviment_type {
+  INPUT
+  OUTPUT
+}
+model stock_movement {
+  id          Int      @id @default(autoincrement())
+  date        DateTime
+  type stock_moviment_type
+  product_id  Int
+  product     product @relation(fields: [product_id], references: [id])
+  amount      Float
+  value       Float
+  observation String  
+  enterprise_id  Int
+  enterprise    enterprise @relation(fields: [enterprise_id], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt  
+}
+
+
+enum cash_flow_type {
+  INPUT
+  OUTPUT
+}
+model cash_flow{
+  id          Int      @id @default(autoincrement())
+  date        DateTime
+  type cash_flow_type
+  value       Float
+  observation String  
+  enterprise_id  Int
+  enterprise    enterprise @relation(fields: [enterprise_id], references: [id])
+  cash_flow_group_id Int
+  cash_flow_group   cash_flow_group @relation(fields: [cash_flow_group_id], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt  
+}
+enum order_type {
+  SALE
+  RETURN
+}
+
+model cash_flow_group {
+  id          Int      @id @default(autoincrement())
+  name        String
+  enterprise_id  Int
+  enterprise    enterprise @relation(fields: [enterprise_id], references: [id])
+  cash_flows cash_flow[]
+  orders    order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt  
+}
+
+model order {
+  id            Int      @id @default(autoincrement())
+  date          DateTime
+  customer_id   Int
+  customer      customer @relation(fields: [customer_id], references: [id])
+  enterprise_id  Int
+  enterprise    enterprise @relation(fields: [enterprise_id], references: [id])
+  
+  cash_flow_group_id Int
+  cash_flow_group   cash_flow_group @relation(fields: [cash_flow_group_id], references: [id])
+
+  order_products order_product[]
+  type order_type
+  observation   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  }
+
+
+model order_product {
+  id          Int      @id @default(autoincrement())
+  product_id  Int
+  product     product @relation(fields: [product_id], references: [id])
+  order_id    Int
+  order       order   @relation(fields: [order_id], references: [id])
+  amount      Float
+  value       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt  
 }

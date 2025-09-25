@@ -1,0 +1,24 @@
+meta {
+  name: getPDF
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/bank-slips/01K5S46J6GZKJS0P1M41K74YYQ
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "data": {
+      "uuid": "10",
+      "production_environment": false
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+}

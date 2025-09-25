@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "public"."BankSlip" ALTER COLUMN "discount" DROP NOT NULL,
+ALTER COLUMN "interest" DROP NOT NULL,
+ALTER COLUMN "fine" DROP NOT NULL;

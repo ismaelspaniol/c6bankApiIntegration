@@ -1,21 +1,47 @@
 import * as interfaces from './interfaces';
-import { Controller, Post, Body, Put, Param, Get } from '@nestjs/common';
+import { Controller, Post, Body, Put, Param } from '@nestjs/common';
 import { BankSlipService } from './bank-slip.service';
+import * as interfacesBoleto from './interfaceDTOBoleto';
 
 @Controller('bank-slips')
 export class BankSlipController {
   constructor(private readonly bankSlipService: BankSlipService) {}
 
   @Post()
-  async create(@Body() body: interfaces.CreateBankSlipDto) {
-    if (body.data.production_environment === false) {
-      body.bank_slip.billing_scheme = '21';
-    } else {
-      body.bank_slip.billing_scheme = '15';
-    }
+  async create(@Body() body: interfacesBoleto.Fatura) {
+    // console.log(body);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return await this.bankSlipService.createBankSlip(body);
+    const newBankSlip: interfaces.CreateBankSlipDto = {
+      bank_slip: {
+        external_reference_id: body.referencia_externa,
+        amount: body.valor,
+        due_date: body.data_vencimento,
+        instructions: body.instrucoes,
+        billing_scheme: '21', // 21 - sandbox, 15 - produção
+        our_number: body.nosso_numero,
+        payer: {
+          name: body.pagador.nome, // Ajustar conforme necessário
+          tax_id: body.pagador.documento,
+          email: body.pagador.email,
+          address: {
+            street: body.pagador.endereco.rua,
+            number: body.pagador.endereco.numero,
+            complement: body.pagador.endereco.complemento,
+            city: body.pagador.endereco.cidade,
+            state: body.pagador.endereco.estado,
+            zip_code: body.pagador.endereco.cep,
+          },
+        },
+      },
+      data: {
+        uuid: body.uuid, // Gerar ou receber conforme necessário
+        production_environment: false, // Ajustar conforme necessário
+      },
+    };
+
+    // console.log(newBankSlip);
+
+    return await this.bankSlipService.createBankSlip(newBankSlip);
   }
 
   @Put(':id')
@@ -28,14 +54,10 @@ export class BankSlipController {
     return await this.bankSlipService.updateBankSlip(body);
   }
 
-  @Post(':id')
-  async consultSlip(
-    @Param('id') id: string,
-    @Body() body: interfaces.consultBankSlipDto,
-  ) {
-    body.data.id = id;
+  @Post(':uuid')
+  async consultSlip(@Param('uuid') uuid: string) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return await this.bankSlipService.consultBankSlip(body);
+    return await this.bankSlipService.consultBankSlip(uuid, false);
   }
 
   @Post(':id')
@@ -43,7 +65,7 @@ export class BankSlipController {
     @Param('id') id: string,
     @Body() body: interfaces.consultBankSlipDto,
   ) {
-    body.data.id = id;
+    body.data.uuid = id;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await this.bankSlipService.cancelBankSlip(body);
   }
