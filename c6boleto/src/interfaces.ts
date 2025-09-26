@@ -29,7 +29,7 @@ export interface CreateBankSlipDto {
     payer: {
       name: string;
       tax_id: string;
-      email: string;
+      email?: string;
       address: {
         street: string;
         number: number;

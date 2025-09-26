@@ -150,15 +150,16 @@ export class BankSlipService {
         this.httpService.get(url, { headers }),
       );
 
-      console.log(response.data);
-
-      return {
+      const data = {
         status: HttpStatus.OK,
         data: {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           base64_pdf_file: response.data.base64_pdf_file,
         },
       };
+      console.log(data);
+
+      return data;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.response && error.response.status === 400) {

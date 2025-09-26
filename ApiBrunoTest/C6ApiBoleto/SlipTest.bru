@@ -12,34 +12,54 @@ post {
 
 body:json {
   {
-    "bank_slip": {
-      "external_reference_id": "11",
-      "amount": 123.45,
-      "due_date": "2025-10-11",
-      "instructions": [
-        "Não receber após o vencimento",
-        "str2",
-        "str3",
-        "str4"
-      ],        
-      "our_number": "3048",
-      "payer": {
-        "name": "Ismael Rodrigo Spaniol",
-        "tax_id": "03163193099",
-        "email": "pagador@email.com.br",
-        "address": {
-          "street": "Av. Nove de Julho",
-          "number": 123,
-          "complement": "Complemento",
-          "city": "Rio de Janeiro",
-          "state": "RJ",
-          "zip_code": "05093000"
-        }
+    "referencia_externa": "11",
+    "valor": 200.9,
+    "data_vencimento": "2025-10-15",
+    "esquema_cobranca": "SIMPLES",
+    "nosso_numero": "12",
+    "banco": "1",
+    "uuid": "23351a",
+    "instrucoes": [
+      "Não receber após o vencimento",
+      "Cobrar multa de 2% após 5 dias"
+    ],
+    "desconto": {
+      "tipo": "",
+      "primeiro": {
+        "valor": 0,
+        "limite_dias": 0
+      },
+      "segundo": {
+        "valor": 0,
+        "limite_dias": 0
+      },
+      "terceiro": {
+        "valor": 0,
+        "limite_dias": 0
       }
     },
-    "data": {
-      "uuid": "11",
-      "production_environment":false
+    "juros": {
+      "tipo": "",
+      "valor": 0,
+      "limite_dias": 0
+    },
+    "multa": {
+      "tipo": "",
+      "valor": 0,
+      "limite_dias": 0
+    },
+    "pagador": {
+      "nome": "João da Silva",
+      "documento": "03163193099",
+      "email": "joao@email.com",
+      "endereco": {
+        "rua": "Rua das Flores",
+        "numero": 100,
+        "complemento": "Apto 202",
+        "cidade": "São Paulo",
+        "estado": "SP",
+        "cep": "01001000"
+      }
     }
   }
 }

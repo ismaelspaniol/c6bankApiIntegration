@@ -1,5 +1,5 @@
 import * as interfaces from './interfaces';
-import { Controller, Post, Body, Put, Param } from '@nestjs/common';
+import { Controller, Post, Body, Put, Param, Get } from '@nestjs/common';
 import { BankSlipService } from './bank-slip.service';
 import * as interfacesBoleto from './interfaceDTOBoleto';
 
@@ -22,7 +22,8 @@ export class BankSlipController {
         payer: {
           name: body.pagador.nome, // Ajustar conforme necessário
           tax_id: body.pagador.documento,
-          email: body.pagador.email,
+          ...(body.pagador.email ? { email: body.pagador.email } : {}),
+
           address: {
             street: body.pagador.endereco.rua,
             number: body.pagador.endereco.numero,
@@ -54,9 +55,8 @@ export class BankSlipController {
     return await this.bankSlipService.updateBankSlip(body);
   }
 
-  @Post(':uuid')
+  @Get(':uuid')
   async consultSlip(@Param('uuid') uuid: string) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await this.bankSlipService.consultBankSlip(uuid, false);
   }
 

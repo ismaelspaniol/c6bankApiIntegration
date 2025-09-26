@@ -22,7 +22,7 @@ model BankSlip {
   ourNumber              String
   payerName              String
   payerTaxId             String
-  payerEmail             String
+  payerEmail             String?
   payerAddress           Json
   createdAt              DateTime @default(now())
   banckReturned          Json?

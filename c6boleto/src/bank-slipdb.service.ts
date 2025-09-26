@@ -61,7 +61,7 @@ export class BankSlipDbService {
         ourNumber: body.bank_slip.our_number,
         payerName: body.bank_slip.payer.name,
         payerTaxId: body.bank_slip.payer.tax_id,
-        payerEmail: body.bank_slip.payer.email,
+        payerEmail: body.bank_slip.payer.email || undefined,
         payerAddress: body.bank_slip.payer.address,
         uuid: body.data.uuid, // Create with UUID
         banckReturned: body.data.banckReturned
